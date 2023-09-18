@@ -1,30 +1,29 @@
 # Tekton in Action
 
-This short tutorial covers how to install Tekton and how to create a very simple Task and Pipeline. 
+In this guide you can learn how to install Tekton and how to create a simple Task and Pipeline. 
 
-[Tekton](https://tekton.dev) is a non-opinionated Pipeline Engine built for the Cloud (specifically for Kubernetes). You can build any kind of pipelines that you want as the engine doesn't impose any restrictions on the kind of Tasks that it can execute. This makes it perfect for building Service Pipelines where you might need to have special requirements that cannot be met by a managed service.  
+[Tekton](https://tekton.dev) is a non-opinionated Pipeline Engine built for the cloud (more specifically, for Kubernetes). You can build any kind of pipeline that you want as the engine doesn't impose any restrictions on the kind of Tasks that it can execute. This makes it perfect for building Service Pipelines where you might have special requirements that cannot be met by a managed service.  
 
-After running our first Tekton Pipeline this tutorial also includes a links to more complex Service Pipelines used to build the Conference Application Services. 
-
+After running our first Tekton Pipeline, you'll find in this tutorial links to more complex Service Pipelines used to build the Conference Application Services.
 
 ## Installing Tekton
 
-Follow the next steps in order to install and setup Tekton in your Kubernetes Cluster. If you don't have a Kubernetes Cluster you can create one with [KinD, as we did for Chapter 2](../../chapter-2/README.md#creating-a-local-cluster-with-kubernetes-kind) 
+Follow the next steps in order to install and setup Tekton in your Kubernetes Cluster. If you don't have a Kubernetes Cluster you can create one with [KinD, as we did on Chapter 2](../../chapter-2/README.md#creating-a-local-cluster-with-kubernetes-kind) 
 
 1. **Install Tekton Pipelines**
 
-```
+```shell
   kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.45.0/release.yaml
 ```
 
 1. **Install Tekton Dashboard (optional)**
 
-```
+```shell
 kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.33.0/release.yaml
 ```
 You can access the dashboard by port-forwarding using `kubectl`:
 
-```
+```shell
 kubectl port-forward svc/tekton-dashboard  -n tekton-pipelines 9097:9097
 ```
 
@@ -38,7 +37,7 @@ Then you can access pointing your browser to [http://localhost:9097](http://loca
 You can also install [Tekton `tkn` CLI tool](https://github.com/tektoncd/cli). 
 If you are in Mac OSX you can run: 
 
-```
+```shell
 brew install tektoncd-cli
 ```
 
@@ -49,7 +48,7 @@ This section aims to get you started creating Tasks and a Simple Pipeline, so yo
 
 With Tekton we can define what our tasks do by create Tekton Task definitions. The following is the most simple example of a task: 
 
-```
+```yaml
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
@@ -71,14 +70,14 @@ spec:
 
 This Tekton `Task` uses the `ubuntu` image and the `echo` command located inside that image. This `Task` also accept a parameter called `name` that will be used to print a message. Let's apply this `Task` definition to our cluster by running: 
 
-```
+```shell
 kubectl apply -f hello-world/hello-world-task.yaml
 ```
 
 When we apply this resource to Kubernertes we are not executing the task, we are only making the Task definition available for other to use. This task can now be referenced in multiple pipelines or being executed independently by different users. 
 
 You can now list the available tasks in the cluster by running: 
-```
+```shell
 > kubectl get tasks
 NAME               AGE
 hello-world-task   88s
@@ -86,7 +85,7 @@ hello-world-task   88s
 
 Now let's run our Task. We do this by creating a `TaskRun` resource, which represent a single run for our task. Notice that this concrete run will have a fixed resource name (`hello-world-task-run-1`) and a concrete value for the task parameter called `name`. 
 
-```
+```yaml
 apiVersion: tekton.dev/v1
 kind: TaskRun
 metadata:
@@ -100,14 +99,14 @@ spec:
 ```
 
 Let's apply this `TaskRun` resource to our cluster to create our first Task Run (execution):
-```
+```shell
 kubectl apply -f hello-world/task-run.yaml
 taskrun.tekton.dev/hello-world-task-run-1 created
 ```
 
 As soon as the `TaskRun` is created, the Tekton Pipeline Engine is in charge of scheduling the tasks and create the Kubernetes Pod needed to execute it. If you list the pods in the default namespace you should see something like this: 
 
-```
+```shell
 kubectl get pods
 NAME                         READY   STATUS     RESTARTS   AGE
 hello-world-task-run-1-pod   0/1     Init:0/1   0          2s
@@ -115,7 +114,7 @@ hello-world-task-run-1-pod   0/1     Init:0/1   0          2s
 
 You can also list `TaskRun`s to check for status: 
 
-```
+```shell
 kubectl get taskrun
 NAME                     SUCCEEDED   REASON      STARTTIME   COMPLETIONTIME
 hello-world-task-run-1   True        Succeeded   66s         7s
@@ -123,7 +122,7 @@ hello-world-task-run-1   True        Succeeded   66s         7s
 
 Finally, because we were executing a single task you can see the logs of the TaskRun execition by tailing the logs of the pod that was created:
 
-```
+```shell
 kubectl logs -f hello-world-task-run-1-pod 
 Defaulted container "step-echo" out of: step-echo, prepare (init)
 Hello World: Building Platforms on top of Kubernetes reader!
@@ -140,13 +139,13 @@ Now we can use Pipelines to coordinate multiple tasks like the one that we defin
 
 Before creating the Pipeline we will install the `wget` Tekton task from the Tekton Hub by running: 
 
-```
+```shell
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/wget/0.1/wget.yaml
 ```
 
 You should see: 
 
-```
+```shell
 task.tekton.dev/wget created
 ```
 
@@ -224,7 +223,7 @@ For this example, we are using the `wget` Task that we installed from the Tekton
 
 Go ahead and install this pipeline definition by running: 
 
-```
+```shell
 kubectl apply -f hello-world/hello-world-pipeline.yaml
 ```
 
@@ -259,13 +258,13 @@ Both with `PipelineRuns` and `TaskRuns` you will need to generate a new resource
 
 Run this pipeline by running: 
 
-```
+```shell
 kubectl apply -f hello-world/pipeline-run.yaml
 ```
 
 Check the pods that are created: 
 
-```
+```shell
 > kubectl get pods
 NAME                                         READY   STATUS        RESTARTS   AGE
 affinity-assistant-ca1de9eb35-0              1/1     Terminating   0          19s
@@ -278,7 +277,7 @@ Notice that there is one Pod per Task and a pod called `affinity-assistant-ca1de
 
 Check the TaskRuns too: 
 
-```
+```shell
 > kubectl get taskrun
 NAME                                     SUCCEEDED   REASON      STARTTIME   COMPLETIONTIME
 hello-world-pipeline-run-1-cat           True        Succeeded   109s        104s
@@ -316,21 +315,21 @@ To be able to run this Service Pipeline you need to set up credentials to a Cont
 
 For this example we will create a Kubernetes Secret with our Docker Hub credentials:
 
-```
+```shell
 kubectl create secret docker-registry docker-credentials --docker-server=https://index.docker.io/v1/ --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
 ```
 
 
 Then we will install the `Git Clone` and the `ko` Tekton Tasks: 
 
-```
+```shell
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.9/git-clone.yaml
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/ko/0.1/ko.yaml
 ```
 
 Let's install our Service Pipeline defintion to our cluster:
 
-```
+```shell
 kubectl apply -f service-pipeline.yaml
 ```
 
@@ -369,7 +368,7 @@ spec:
 
 Apply this `PipelineRun` definition to the cluster to create a new instance of the Service Pipeline: 
 
-```
+```shell
 kubectl apply -f service-pipeline-run.yaml
 ```
 
@@ -383,7 +382,7 @@ When the team decides the combination of services and version that they want to 
 
 You can install the Application Helm Chart Pipeline by running: 
 
-```
+```shell
 kubectl apply -f app-helm-chart-pipeline.yaml
 ```
 
@@ -420,7 +419,7 @@ spec:
 
 Apply this `PipelineRun` definition to the cluster to create a new instance of the Application Helm Chart Pipeline: 
 
-```
+```shell
 kubectl apply -f app-helm-chart-pipeline-run.yaml
 ```
 
@@ -434,7 +433,7 @@ Notice that the Application Helm Chart pipeline also uses the same `docker-crede
 
 If you want to get rid of the KinD Cluster created for these tutorials, you can run:
 
-```
+```shell
 kind delete clusters dev
 ```
 
