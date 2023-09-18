@@ -1,4 +1,4 @@
-# Dagger in Action
+# Chapter 3 :: Dagger in Action
 
 In this short tutorial we will be looking at the Dagger Service Pipelines provided to build, test, package and publish each service. 
 These pipelines are implemented in Go using the Dagger Go SDK and take care of building each service and creating a container. A separate pipeline is provided to build and publish the application Helm Chart.

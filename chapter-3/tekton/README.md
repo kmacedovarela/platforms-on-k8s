@@ -1,4 +1,4 @@
-# Tekton in Action
+# Chapter 3 ::  Tekton in Action
 
 In this guide you can learn how to install Tekton and how to create a simple Task and Pipeline. 
 
