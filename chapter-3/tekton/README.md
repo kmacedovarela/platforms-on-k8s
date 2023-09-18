@@ -11,35 +11,34 @@ After running our first Tekton Pipeline, you'll find in this tutorial links to m
 Follow the next steps in order to install and setup Tekton in your Kubernetes Cluster. If you don't have a Kubernetes Cluster you can create one with [KinD, as we did on Chapter 2](../../chapter-2/README.md#creating-a-local-cluster-with-kubernetes-kind) 
 
 1. **Install Tekton Pipelines**
-
-```shell
-  kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.45.0/release.yaml
-```
+    
+    ```shell
+      kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.45.0/release.yaml
+    ```
 
 1. **Install Tekton Dashboard (optional)**
 
-```shell
-kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.33.0/release.yaml
-```
-You can access the dashboard by port-forwarding using `kubectl`:
+    ```shell
+    kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.33.0/release.yaml
+    ```
+1. You can access the dashboard by port-forwarding using `kubectl`:
 
-```shell
-kubectl port-forward svc/tekton-dashboard  -n tekton-pipelines 9097:9097
-```
+    ```shell
+    kubectl port-forward svc/tekton-dashboard  -n tekton-pipelines 9097:9097
+    ```
 
-![Tekton Dashboard](imgs/tekton-dashboard.png)
+    ![Tekton Dashboard](imgs/tekton-dashboard.png)
 
-Then you can access pointing your browser to [http://localhost:9097](http://localhost:9097)
-
+1. Then you can access pointing your browser to [http://localhost:9097](http://localhost:9097)
 
 1. **Install Tekton CLI (optional)**:
 
-You can also install [Tekton `tkn` CLI tool](https://github.com/tektoncd/cli). 
-If you are in Mac OSX you can run: 
-
-```shell
-brew install tektoncd-cli
-```
+    You can also install [Tekton `tkn` CLI tool](https://github.com/tektoncd/cli). 
+    If you are in Mac OSX you can run: 
+    
+    ```shell
+    brew install tektoncd-cli
+    ```
 
 
 ## Getting started with Tekton Tasks
