@@ -477,6 +477,6 @@ kind delete clusters dev
 
 ## What's next? 
 
-Now that you have tried out Tekton, what about giving a look at Dager? 
+Now that you have tried out Tekton, what about giving a look at Dagger? 
 
 To keep going with our plan described on the [Chapter 3 guides](../README.md#chapter-3--service-pipelines), you can now get to some hands-on practices using [Dagger for Service Pipelines](../dagger/README.md)
